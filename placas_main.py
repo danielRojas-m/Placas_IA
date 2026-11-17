@@ -25,7 +25,7 @@ UMBRAL_PISTA = 0.3  # solapamiento mínimo para considerar que es la misma placa
 AUSENCIA_MAXIMA = 15  # cuadros sin verla antes de olvidar una placa
 
 # Patrones válidos de 7 posiciones: D = dígito, L = letra, _ = vacío (ver estados.FORMATOS).
-MASCARAS = ("LLLDDDL", "LLLDDDD", "LLDDDDL", "LLDDDDD", "DDDLLL_", "LDDLLL_")
+MASCARAS = ("LLLDDDL", "LLLDDDD", "LLDDDDL", "LLDDDDD", "DDDLLL_", "LDDLLL_","DDLDDD","DDLDDD_")
 _CLASES = {"D": np.arange(10), "L": np.arange(10, 36), "_": np.array([36])}
 
 REJILLA, TAM = 20, 320

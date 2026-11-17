@@ -1,0 +1,28 @@
+REFactor de lectura de fuentes - Lector de Placas
+
+Archivos incluidos:
+- app_main.py: interfaz y coordinacion de la aplicacion.
+- Placas2_main.py: logica original de deteccion, OCR y seguimiento (sin cambios funcionales).
+- fuentes_worker.py: nuevo lector asincrono de webcam, camara IP, video e imagen.
+
+INSTALACION
+1. Haz una copia de seguridad de tu carpeta original del proyecto.
+2. Copia estos tres archivos a la carpeta donde actualmente ejecutas app_main.py.
+3. Conserva en esa misma carpeta los modulos y recursos que ya usa tu proyecto:
+   ui_DetectorPlacas.py, modelos.py, qr_placa.py, estados2.py, sinteticas.py,
+   pesos/modelos de IA y cualquier otro archivo requerido por esos modulos.
+4. Ejecuta: python app_main.py
+
+IMPORTANTE
+- No se modifico ui_DetectorPlacas.py ni la arquitectura interna de los modelos.
+- La apertura y lectura de webcam, camara IP, video y foto se ejecutan en un QThread.
+- El lector conserva unicamente el frame mas reciente para evitar colas de video.
+- La inferencia sigue en el hilo de IA que ya tenia la aplicacion.
+- El procesamiento visual (filtros, zoom, Canny y conversion para pantalla) aun tiene
+  una parte en el hilo de GUI. Si la interfaz continua perdiendo respuesta con imagenes
+  grandes, el siguiente paso es mover ese preprocesamiento al trabajador de vision.
+
+VALIDACION REAL
+Los tres archivos pasaron la comprobacion sintactica con py_compile. En este entorno
+no estan instalados PySide6 ni TensorFlow, por lo que no fue posible ejecutar la GUI,
+abrir una camara ni probar la inferencia con los pesos reales.

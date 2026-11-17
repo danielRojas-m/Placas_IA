@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="ItcLince">
+    <file>maxLince.png</file>
+  </qresource>
+</RCC>

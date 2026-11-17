@@ -20,6 +20,26 @@ RANGOS = [
     ("Zacatecas", "ZDA", "ZHZ"),
 ]
 
+RANGOS_ELECTRICOS = [
+    ("Aguascalientes", "01A", "26A"), ("Baja California", "27A", "33C"),
+    ("Baja California Sur", "34C", "59C"), ("Campeche", "60C", "80C"),
+    ("Chiapas", "81C", "07D"), ("Chihuahua", "08D", "11E"),
+    ("Coahuila", "12E", "96E"), ("CDMX", "97E", "49H"),
+    ("Colima", "50H", "75H"),("Durango", "76H", "10J"),
+    ("Estado de México", "11J", "62L"),("Guanajuato", "63L", "31M"),
+    ("Guerrero", "32M", "61M"), ("Hidalgo", "62M", "01N"),
+    ("Jalisco", "02N", "08R"),("Michoacán", "09R", "64R"),
+    ("Morelos", "65R", "04S"),("Nayarit", "05S", "24S"),
+    ("Nuevo León", "25S", "96T"),("Oaxaca", "97T", "18U"),
+    ("Puebla", "19U", "06V"),("Querétaro", "07V", "27V"),
+    ("Quintana Roo", "28V", "48V"),("San Luis Potosí", "49V", "85V"),
+    ("Sinaloa", "86V", "32W"),("Sonora", "33W", "07X"),
+    ("Tabasco", "08X", "50X"),("Tamaulipas", "51X", "35Y"),
+    ("Tlaxcala", "36Y", "56Y"),("Veracruz", "57Y", "48Z"),
+    ("Yucatán", "49Z", "78Z"),("Zacatecas", "79Z", "99Z"),
+]
+
+
 # Series de dos letras (formato AB-1234-C), con los mismos estados.
 RANGOS_DOS_LETRAS = [
     ("Aguascalientes", "AA", "AF"), ("Baja California", "AG", "CD"),
@@ -51,6 +71,7 @@ FORMATOS = [
     (re.compile(r"^[A-Z]{2}\d{4}[A-Z]$"), lambda t: f"{t[:2]}-{t[2:6]}-{t[6]}"),
     (re.compile(r"^[A-Z]{2}\d{5}$"), lambda t: f"{t[:2]}-{t[2:4]}-{t[4:]}"),
     (re.compile(r"^(\d{3}|[A-Z]\d{2})[A-Z]{3}$"), lambda t: f"{t[:3]}-{t[3:]}"),
+    (re.compile(r"^\d{2}[A-Z]\d{3}$"), lambda t: f"{t[:3]}-{t[3:]}"),
 ]
 
 
@@ -60,6 +81,19 @@ def estado_por_serie(letras):
         if inicio <= letras <= fin:
             return estado
     return DESCONOCIDO
+
+
+def _clave_electrica(serie):
+    return (serie[2], int(serie[:2]))
+
+def estado_por_serie_electrica(serie):
+    """Devuelve el estado al que pertenece una serie eléctrica (ej. '48H')."""
+    clave = _clave_electrica(serie)
+    for estado, inicio, fin in RANGOS_ELECTRICOS:
+        if _clave_electrica(inicio) <= clave <= _clave_electrica(fin):
+            return estado
+    return DESCONOCIDO
+
 
 
 def interpretar(texto):
@@ -82,6 +116,11 @@ def interpretar(texto):
     elif limpio[:2].isalpha():
         estado = estado_por_serie(limpio[:2])
     else:
-        estado = CDMX  # 123-ABC o A12-ABC
+        if limpio[:3].isdigit() or limpio[0].isalpha():
+            estado = CDMX  # 123-ABC o A12-ABC
+        else:
+            estado = estado_por_serie_electrica(limpio[:3])
+
+
 
     return {"matricula": matricula, "estado": estado, "valida": estado != DESCONOCIDO}

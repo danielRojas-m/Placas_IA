@@ -4,6 +4,12 @@ os.environ.setdefault("KERAS_BACKEND", "tensorflow")
 os.environ.setdefault("TF_FORCE_GPU_ALLOW_GROWTH", "true")  # la GPU solo tiene 4 GB
 
 import keras
+import tensorflow as tf
+try:
+    tf.config.threading.set_intra_op_parallelism_threads(4)
+    tf.config.threading.set_inter_op_parallelism_threads(1)
+except RuntimeError:
+    pass
 import numpy as np
 from keras import Input, ops
 from keras.layers import (Activation, BatchNormalization, Conv2D, Dense, Dropout, Flatten,
